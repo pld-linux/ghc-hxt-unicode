@@ -6,7 +6,7 @@
 Summary:	Unicode en-/decoding functions for utf8, iso-latin-* and other encodings
 Name:		ghc-%{pkgname}
 Version:	9.0.2.4
-Release:	1
+Release:	2
 License:	MIT
 Group:		Development/Languages
 #Source0Download: http://hackage.haskell.org/package/hxt-unicode
