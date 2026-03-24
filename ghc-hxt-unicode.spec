@@ -3,7 +3,8 @@
 %bcond_without	prof	# profiling library
 #
 %define		pkgname	hxt-unicode
-Summary:	Unicode en-/decoding functions for utf8, iso-latin-* and other encodings
+Summary:	Unicode en-/decoding functions for utf-8, iso-latin-* and other encodings
+Summary(pl.UTF-8):	Funcje kodujące/dekodujące Unicode dla utf-8, iso-latin-* i innych kodowań
 Name:		ghc-%{pkgname}
 Version:	9.0.2.4
 Release:	2
@@ -14,15 +15,20 @@ Source0:	http://hackage.haskell.org/package/%{pkgname}-%{version}/%{pkgname}-%{v
 # Source0-md5:	e4f61cef60736dca5778641e791f66c8
 URL:		http://hackage.haskell.org/package/hxt-unicode
 BuildRequires:	ghc >= 6.12.3
-BuildRequires:	ghc-hxt-charproperties
+BuildRequires:	ghc-base >= 4
+BuildRequires:	ghc-hxt-charproperties >= 9
+BuildRequires:	ghc-hxt-charproperties < 10
 %if %{with prof}
 BuildRequires:	ghc-prof
-BuildRequires:	ghc-hxt-charproperties-prof
+BuildRequires:	ghc-base-prof >= 4
+BuildRequires:	ghc-hxt-charproperties-prof >= 9
+BuildRequires:	ghc-hxt-charproperties-prof < 10
 %endif
 BuildRequires:	rpmbuild(macros) >= 1.608
 %requires_eq	ghc
 Requires(post,postun):	/usr/bin/ghc-pkg
-Requires:	ghc-hxt-charproperties
+Requires:	ghc-base >= 4
+Requires:	ghc-hxt-charproperties >= 9
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # debuginfo is not useful for ghc
@@ -32,21 +38,28 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_noautocompressdoc	*.haddock
 
 %description
-Unicode encoding and decoding functions for utf8, iso-latin-* and
+Unicode encoding and decoding functions for utf-8, iso-latin-* and
 somes other encodings, used in the Haskell XML Toolbox.
-ISO Latin 1 - 16, utf8, utf16, ASCII are supported. Decoding is done
+ISO Latin 1-16, UTF-8, UTF-16, ASCII are supported. Decoding is done
 with lazy functions, errors may be detected or ignored.
+
+%description -l pl.UTF-8
+Funkcje kodujące i dekodujące dla utf-8, iso-latin-* i niektórych
+innych kodowań, używane w bibliotece Haskell XML Toolbox. Obsługiwane
+są ISO Latin 1-16, UTF-8, UTF-16, ASCII. Dekodowanie jest wykonywane
+przy użyciu funkcji leniwych, błędy mogą być wykrywane lub ignorowane.
 
 %package prof
 Summary:	Profiling %{pkgname} library for GHC
 Summary(pl.UTF-8):	Biblioteka profilująca %{pkgname} dla GHC
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	ghc-hxt-charproperties-prof
+Requires:	ghc-base-prof >= 4
+Requires:	ghc-hxt-charproperties-prof >= 9
 
 %description prof
-Profiling %{pkgname} library for GHC.  Should be installed when
-GHC's profiling subsystem is needed.
+Profiling %{pkgname} library for GHC. Should be installed when GHC's
+profiling subsystem is needed.
 
 %description prof -l pl.UTF-8
 Biblioteka profilująca %{pkgname} dla GHC. Powinna być zainstalowana
@@ -64,6 +77,7 @@ runhaskell Setup.hs configure -v2 \
 	--docdir=%{_docdir}/%{name}-%{version}
 
 runhaskell Setup.hs build
+
 runhaskell Setup.hs haddock --executables
 
 %install
@@ -74,8 +88,7 @@ runhaskell Setup.hs copy --destdir=$RPM_BUILD_ROOT
 
 # work around automatic haddock docs installation
 %{__rm} -rf %{name}-%{version}-doc
-cp -a $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version} %{name}-%{version}-doc
-%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
+%{__mv} $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version} %{name}-%{version}-doc
 
 runhaskell Setup.hs register \
 	--gen-pkg-config=$RPM_BUILD_ROOT%{_libdir}/%{ghcdir}/package.conf.d/%{pkgname}.conf
